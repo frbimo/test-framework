@@ -1,0 +1,9 @@
+[project]
+name = "test-framework"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic[email,timezone]>=2.11.2",
+]
