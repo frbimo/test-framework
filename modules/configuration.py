@@ -158,7 +158,13 @@ class ConfigurationParameters(BaseModel):
         None,
         description="The duplexing scheme used (TDD or FDD)."
     )
-    tddDlUlRatio: Optional[float] = Field(
+    # # This is the correct TIFG spec. For PoC on integration with RICTEST tddDlUlRatio should value string like 7:3
+    # tddDlUlRatio: Optional[float] = Field(
+    #     None,
+    #     description="For TDD mode, the ratio or pattern describing Downlink (DL) vs Uplink (UL) transmission time."
+    # )
+
+    tddDlUlRatio: Optional[str] = Field(
         None,
         description="For TDD mode, the ratio or pattern describing Downlink (DL) vs Uplink (UL) transmission time."
     )
@@ -194,6 +200,20 @@ class ConfigurationParameters(BaseModel):
         description="Total power transmitted into the antenna element(s), often measured in dBm or Watts."
     )
 
+    # Custom settings or vendor-specific parameters  (RICTEST)
+    numberOfCells: Optional[int] = Field(
+        None,
+        description="Number of cells configured in the test setup."
+    )
+    azimuth: Optional[int] = Field(
+        None,
+    )
+    tilt: Optional[int] = Field(
+        None,
+    )
+    height: Optional[int] = Field(
+        None,
+    )
     # Allow additional properties as defined in schema
     # The class docstring already mentions this possibility.
 

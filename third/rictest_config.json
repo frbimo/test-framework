@@ -1,0 +1,18 @@
+{
+    "Cell_Config": [
+        {
+            "Cell Type Name": "",
+            "Number of Cells": 0,
+            "band5G": "n79",
+            "cellsConfig": [
+                {
+                    "Configured Tx Power": 0,
+                    "Height": 0,
+                    "Azimuth": 0,
+                    "Tilt": 0,
+                    "Advanced traffic model": ""
+                }
+            ]
+        }
+    ]
+}

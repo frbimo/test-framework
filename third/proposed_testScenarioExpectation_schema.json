@@ -1,0 +1,246 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Test Specification",
+    "description": "Schema for defining test specifications.",
+    "type": "object",
+    "properties": {
+        "testSpecifications": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "testSpecificationId": {
+                        "type": "string",
+                        "description": "Unique identifier for this test specification."
+                    },
+                    "testSpecificationDescription": {
+                        "type": "string",
+                        "description": "Human-readable description of the test specification."
+                    },
+                    "expectationVerb": {
+                        "type": "string",
+                        "enum": [
+                            "VALIDATE",
+                            "EXPECT",
+                            "VERIFY_IMPACT"
+                        ],
+                        "description": "Action verb for the expectation."
+                    },
+                    "expectationObject": {
+                        "type": "object",
+                        "properties": {
+                            "objectType": {
+                                "type": "string",
+                                "enum": [
+                                    "RAN_Node",
+                                    "UE_Group",
+                                    "O_RU",
+                                    "O_DU",
+                                    "O_CU"
+                                ],
+                                "description": "Type of the primary network object under test (DUT)."
+                            },
+                            "objectInstance": {
+                                "type": "string",
+                                "description": "Specific instance of the DUT (optional, e.g., gNB_Taipei_01, LowPowerUEs)."
+                            }
+                        },
+                        "required": [
+                            "objectType"
+                        ],
+                        "description": "The primary device or group under test for the energy saving algorithm."
+                    },
+                    "targetAssuranceTime": {
+                        "type": "object",
+                        "properties": {
+                            "startTime": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "Start time for the target assurance period."
+                            },
+                            "endTime": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "End time for the target assurance period."
+                            }
+                        },
+                        "description": "Timeframe over which the expectations should be assured (optional)."
+                    },
+                    "contexts": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "contextType": {
+                                    "type": "string",
+                                    "enum": [
+                                        "timePoint",
+                                        "event",
+                                        "stateAfterEvent",
+                                        "ueBehavior"
+                                    ],
+                                    "description": "Type of the context.",
+                                    "additionalItems": false
+                                },
+                                "contextName": {
+                                    "type": "string",
+                                    "description": "Human-readable name for the context (optional)."
+                                },
+                                "timestamp": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "Timestamp for 'timePoint' context (optional)."
+                                },
+                                "contextReference": {
+                                    "type": "string",
+                                    "description": "Name of the context this context depends on (optional)."
+                                },
+                                "attributes": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "contextAttribute": {
+                                                "type": "string",
+                                                "description": "Name of the context attribute."
+                                            },
+                                            "contextCondition": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "IS_EQUAL_TO",
+                                                    "IS_NOT_EQUAL_TO",
+                                                    "IS_GREATER_THAN",
+                                                    "IS_GREATER_THAN_OR_EQUAL_TO",
+                                                    "IS_LESS_THAN",
+                                                    "IS_LESS_THAN_OR_EQUAL_TO",
+                                                    "IS_WITHIN",
+                                                    "IS_NOT_WITHIN",
+                                                    "EXISTS",
+                                                    "NOT_EXISTS",
+                                                    "CONTAINS",
+                                                    "NOT_CONTAINS"
+                                                ],
+                                                "description": "Condition for the context attribute.",
+                                                "additionalItems": false
+                                            },
+                                            "contextValueRange": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": [
+                                                        "string",
+                                                        "number",
+                                                        "boolean"
+                                                    ]
+                                                },
+                                                "description": "Expected value(s) or range for the context attribute."
+                                            }
+                                        },
+                                        "required": [
+                                            "contextAttribute",
+                                            "contextCondition",
+                                            "contextValueRange"
+                                        ]
+                                    },
+                                    "description": "Attributes defining the context."
+                                }
+                            },
+                            "required": [
+                                "contextType"
+                            ]
+                        },
+                        "description": "Conditions that must be met for the expectation to be evaluated."
+                    },
+                    "expectationTargets": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "targetName": {
+                                    "type": "string",
+                                    "description": "Name of the target KPI or metric."
+                                },
+                                "targetCondition": {
+                                    "type": "string",
+                                    "enum": [
+                                        "IS_EQUAL_TO",
+                                        "IS_NOT_EQUAL_TO",
+                                        "IS_GREATER_THAN",
+                                        "IS_GREATER_THAN_OR_EQUAL_TO",
+                                        "IS_LESS_THAN",
+                                        "IS_LESS_THAN_OR_EQUAL_TO",
+                                        "IS_WITHIN",
+                                        "IS_NOT_WITHIN"
+                                    ],
+                                    "description": "Condition for the target KPI.",
+                                    "additionalItems": false
+                                },
+                                "targetValueRange": {
+                                    "type": [
+                                        "string",
+                                        "number",
+                                        "array"
+                                    ],
+                                    "description": "Expected value(s) or range for the target KPI."
+                                },
+                                "targetUnit": {
+                                    "type": "string",
+                                    "enum": [
+                                        "dBm",
+                                        "dB",
+                                        "Mbps",
+                                        "kbps",
+                                        "ms",
+                                        "packets/s",
+                                        "%",
+                                        "PRB",
+                                        "MHz",
+                                        "GHz",
+                                        "cells",
+                                        "UEs",
+                                        "mW",
+                                        "W",
+                                        "dBFS",
+                                        "count",
+                                        "ratio",
+                                        "none"
+                                    ],
+                                    "description": "none is for no unit"
+                                },
+                                "targetScope": {
+                                    "type": "string",
+                                    "enum": [
+                                        "PerCell",
+                                        "CoverageCell",
+                                        "NeighborCell",
+                                        "ServingCell",
+                                        "AllUEs",
+                                        "SpecificUEGroup",
+                                        "SpecificUE",
+                                        "Network"
+                                    ],
+                                    "description": "The scope to which this target applies."
+                                }
+                            },
+                            "required": [
+                                "targetName",
+                                "targetCondition",
+                                "targetValueRange"
+                            ]
+                        },
+                        "description": "Expected outcomes or KPIs to be validated."
+                    }
+                },
+                "required": [
+                    "testSpecificationId",
+                    "testSpecificationDescription",
+                    "expectationVerb",
+                    "expectationObject",
+                    "expectationTargets"
+                ]
+            }
+        }
+    },
+    "required": [
+        "testSpecifications"
+    ]
+}

@@ -1,0 +1,140 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "ITRI Configuration Parameters",
+    "description": "Schema for the ITRI configuration parameters.",
+    "type": "object",
+    "$defs": {
+        "configurationParameters": {
+            "type": "object",
+            "properties": {
+                "deploymentArchitecture": {
+                    "enum": [
+                        "indoor",
+                        "outdoor"
+                    ]
+                },
+                "deploymentScale": {
+                    "enum": [
+                        "micro",
+                        "pico",
+                        "macro"
+                    ],
+                    "description": "Scale of the deployment.  Micro indicates a small cell, pico indicates a small cell, macro indicates a large cell."
+                },
+                "deploymentRfScenario": {
+                    "enum": [
+                        "rural",
+                        "urban",
+                        "dense.urban",
+                        "LOS",
+                        "NLOS",
+                        "nLOS"
+                    ]
+                },
+                "frequencyRange5G": {
+                    "type": "array",
+                    "items": {
+                        "enum": [
+                            "fr1",
+                            "fr2-1",
+                            "fr2-2",
+                            "fr2-ntn"
+                        ]
+                    },
+                    "minItems": 1
+                },
+                "band5G": {
+                    "type": "array",
+                    "items": {
+                        "enum": [
+                            "n77",
+                            "n78",
+                            "n79"
+                        ]
+                    },
+                    "minItems": 1
+                },
+                "nr-arfcn": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "subCarrierSpacing": {
+                    "enum": [
+                        "15kHz",
+                        "30kHz",
+                        "60kHz"
+                    ]
+                },
+                "totalTransmissionBandwidth": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "totalResourceBlocks": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "carrierPrefixLength": {
+                    "type": "integer"
+                },
+                "slotLength": {
+                    "type": "integer"
+                },
+                "duplexMode": {
+                    "enum": [
+                        "tdd",
+                        "fdd"
+                    ],
+                    "description": "Duplex mode of the testbed component.  tdd indicates Time Division Duplex, dff indicates Frequency Division Duplex."
+                },
+                "tddDlUlRatio": {
+                    "type": "string",
+                    "description": "TDD Downlink to Uplink ratio. Value is in ratio format, e.g. 7:3."
+                },
+                "ipv4": {
+                    "type": "boolean"
+                },
+                "ipv6": {
+                    "type": "boolean"
+                },
+                "numMimoLayers": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "numTxAntenna": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "numRxAntenna": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "totalAntennaGain": {
+                    "type": "number"
+                },
+                "totalTransmitPowerIntoAntenna": {
+                    "type": "number",
+                    "units": "dBm"
+                },
+                "numberOfCells": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "azimuth": {
+                    "type": "number",
+                    "units": "degrees"
+                },
+                "tilt": {
+                    "type": "number",
+                    "units": "degrees"
+                },
+                "height": {
+                    "type": "number",
+                    "units": "meters"
+                },
+                "additionalProperties": true,
+                "required": [],
+                "minProperties": 1
+            }
+        }
+    }
+}
