@@ -1,5 +1,5 @@
 [project]
-name = "test-framework"
+name = "spec-converter"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -11,3 +11,6 @@ dependencies = [
     "pandas>=2.2.3",
     "pydantic[email,timezone]>=2.11.2",
 ]
+
+[tool.uv.workspace]
+members = ["spec-converter"]

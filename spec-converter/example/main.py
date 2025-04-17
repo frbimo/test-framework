@@ -628,8 +628,8 @@ componentDescription="O-RU Simulator",
 manufacturerName="Viavi",
 manufacturerModel="TM500 RU SIM",
 softwareVersion="2.0.0",
-
 )
 print(test_bed)
+
 test_serialization_deserialization("Example 1 (Minimal)", example_data_1)
 test_serialization_deserialization("Example 2 (Complex)", example_data_2)
