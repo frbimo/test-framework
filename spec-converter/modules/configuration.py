@@ -83,6 +83,30 @@ class DuplexModeEnum(str, Enum):
     TDD = "tdd"
     FDD = "fdd"
 
+class GeoCoordinates(BaseModel):
+    """
+    Represents a geolocation group or identifier.
+    This can be used to specify the geographical location of the deployment.
+    """
+    latitude: float = Field(
+        ...,
+        description="Latitude of the geolocation in decimal degrees."
+    )
+    longitude: float = Field(
+        ...,
+        description="Longitude of the geolocation in decimal degrees."
+    )
+    altitude: Optional[float] = Field(
+        None,
+        description="Altitude of the geolocation in meters."
+    )
+
+class GeoLocationGroup(BaseModel):
+    geoLocGrp: List[GeoCoordinates] = Field(
+        default_factory=list,
+        description="Geolocation group or identifier, if applicable."
+    )
+
 
 # --- Enhanced ConfigurationParameters Class ---
 
@@ -199,7 +223,10 @@ class ConfigurationParameters(BaseModel):
         None,
         description="Total power transmitted into the antenna element(s), often measured in dBm or Watts."
     )
-
+    geoLocGrp: Optional[str] = Field(
+        None,
+        description="Geolocation group or identifier, if applicable."
+    )
     # Custom settings or vendor-specific parameters  (RICTEST)
     numberOfCells: Optional[int] = Field(
         None,
@@ -214,15 +241,16 @@ class ConfigurationParameters(BaseModel):
     height: Optional[int] = Field(
         None,
     )
+
     # Allow additional properties as defined in schema
     # The class docstring already mentions this possibility.
 
-    @model_validator(mode='before')
-    @classmethod
-    def check_min_properties(cls, data: Any) -> Any:
-        if isinstance(data, dict) and not data:
-             raise ValueError("ConfigurationParameters must have at least one property.")
-        return data
+    # @model_validator(mode='before')
+    # @classmethod
+    # def check_min_properties(cls, data: Any) -> Any:
+    #     if isinstance(data, dict) and not data:
+    #          raise ValueError("ConfigurationParameters must have at least one property.")
+    #     return data
 
     model_config = {
         'populate_by_name': True, # Allows using aliases like 'nr-arfcn'

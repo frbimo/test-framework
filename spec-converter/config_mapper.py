@@ -1,16 +1,27 @@
 import camelot
 import logging
 import pandas as pd
+from pandas import DataFrame
 import json
+import datetime
+import uuid
 from pathlib import Path
-
+from typing import List
+import requests
 # from pathlib import Path
 from openai import OpenAI
 import os
-from modules.configuration import ConfigurationParameters
+from modules.configuration import ConfigurationParameters,GeoLocationGroup, GeoCoordinates
+from modules.test_report import TestReport
+from modules.test_metadata import TestMetadata,TestType, InterfaceUnderTest, AdditionalContext, UEContext
+from modules.test_bed_component import TestbedComponentsItem
+from modules.test_lab import TestLab,ContactsItem
+from modules.test_result import TestCase
+from modules.test_specification import TestSpecification,ExpectationObjectFragment, ExpectationTargetRequest
+print(camelot.__file__)
 
 def open_json_schema(workdir):
-  file_path = workdir+'/third/json_schema.json'  # Replace with the actual file path
+  file_path = workdir+'/docs/json_schema.json'  # Replace with the actual file path
     # Read and process the JSON data
   with open(file_path, 'r') as file:
     return json.load(file)
@@ -112,40 +123,40 @@ def inference_llm(content, json_schema):
     return json.loads(clean_str)  # Parse the accumulated JSON string
 
     
-def rictest_format(config_params:ConfigurationParameters):
-    format_dict = {
-        "Cell_Config": [
-            {
-                "Cell Type Name": "",
-                "Number of Cells": 0,
-                "band5G": "n79",
-                "cellsConfig": [
-                    {
-                        "Configured Tx Power": 0,
-                        "Height": 0,
-                        "Azimuth": 0,
-                        "Tilt": 0,
-                        "Advanced traffic model": ""
-                    }
-                ]
-            }
-        ]
-    }
+# def rictest_format(config_params:ConfigurationParameters):
+#     format_dict = {
+#         "Cell_Config": [
+#             {
+#                 "Cell Type Name": "",
+#                 "Number of Cells": 0,
+#                 "band5G": "n79",
+#                 "cellsConfig": [
+#                     {
+#                         "Configured Tx Power": 0,
+#                         "Height": 0,
+#                         "Azimuth": 0,
+#                         "Tilt": 0,
+#                         "Advanced traffic model": ""
+#                     }
+#                 ]
+#             }
+#         ]
+#     }
     
-    format_dict["Cell_Config"][0]["Cell Type Name"] = config_params.deploymentScale
-    format_dict["Cell_Config"][0]["Number of Cells"] = config_params.numberOfCells
-    format_dict["Cell_Config"][0]["band5G"] = config_params.band5G
-    format_dict["Cell_Config"][0]["cellsConfig"][0]["Configured Tx Power"] = config_params.totalTransmitPowerIntoAntenna
-    format_dict["Cell_Config"][0]["cellsConfig"][0]["Configured Tx Power"] = config_params.totalTransmitPowerIntoAntenna
-    format_dict["Cell_Config"][0]["cellsConfig"][0]["Height"] = config_params.height
-    format_dict["Cell_Config"][0]["cellsConfig"][0]["Azimuth"] = config_params.azimuth
-    format_dict["Cell_Config"][0]["cellsConfig"][0]["Tilt"] = config_params.tilt
-    format_dict["Cell_Config"][0]["cellsConfig"][0]["Advanced traffic model"] = config_params.tddDlUlRatio
+#     format_dict["Cell_Config"][0]["Cell Type Name"] = config_params.deploymentScale
+#     format_dict["Cell_Config"][0]["Number of Cells"] = config_params.numberOfCells
+#     format_dict["Cell_Config"][0]["band5G"] = config_params.band5G
+#     format_dict["Cell_Config"][0]["cellsConfig"][0]["Configured Tx Power"] = config_params.totalTransmitPowerIntoAntenna
+#     format_dict["Cell_Config"][0]["cellsConfig"][0]["Configured Tx Power"] = config_params.totalTransmitPowerIntoAntenna
+#     format_dict["Cell_Config"][0]["cellsConfig"][0]["Height"] = config_params.height
+#     format_dict["Cell_Config"][0]["cellsConfig"][0]["Azimuth"] = config_params.azimuth
+#     format_dict["Cell_Config"][0]["cellsConfig"][0]["Tilt"] = config_params.tilt
+#     format_dict["Cell_Config"][0]["cellsConfig"][0]["Advanced traffic model"] = config_params.tddDlUlRatio
     
-    print("success formatting")
-    return format_dict
+#     print("success formatting")
+#     return format_dict
 
-if __name__ == "__main__":
+def parse_pdf():
     cwd = os.getcwd()  # Get the current working directory
     print(f"Current working directory: {cwd}")
 
@@ -189,26 +200,185 @@ if __name__ == "__main__":
             # stringify the JSON object
             content=json.dumps(json_object)
 
-            # Perform inference with the LLM
-            response_raw = inference_llm(content, json_schema)
+            # # Perform inference with the LLM
+            # response_raw = inference_llm(content, json_schema)
 
-            llmresponse.append(response_raw)
-
+            # llmresponse.append(response_raw)
+            print(content)
        
-        for each in llmresponse:
-            print(each)
-            # Convert the dictionary to a ConfigurationParameters object
-            config_params = ConfigurationParameters(**each)    
-            # config_params.azimuth = each.get("azimuth")
-            # config_params.tilt = each.get("tilt")
-            # config_params.height = each.get("height")
-            # config_params.numberOfCells = each.get("numberOfCells")
-            # config_params.deploymentScale = each.get("deploymentScale")
-            # config_params.band5G = each.get("band5G")
-            # config_params.tddDlUlRatio = each.get("tddDlUlRatio")
-            # config_params.totalTransmitPowerIntoAntenna = each.get("totalTransmitPowerIntoAntenna")
-            print(rictest_format(config_params))
+        # for each in llmresponse:
+        #     print(each)
+        #     # Convert the dictionary to a ConfigurationParameters object
+        #     config_params = ConfigurationParameters(**each)    
+        #     # config_params.azimuth = each.get("azimuth")
+        #     # config_params.tilt = each.get("tilt")
+        #     # config_params.height = each.get("height")
+        #     # config_params.numberOfCells = each.get("numberOfCells")
+        #     # config_params.deploymentScale = each.get("deploymentScale")
+        #     # config_params.band5G = each.get("band5G")
+        #     # config_params.tddDlUlRatio = each.get("tddDlUlRatio")
+        #     # config_params.totalTransmitPowerIntoAntenna = each.get("totalTransmitPowerIntoAntenna")
+        #     # print(rictest_format(config_params))
 
     print("Script execution finished.")
 
-   
+def parse_csv(filename)->DataFrame:
+    cwd = os.getcwd() 
+    df = pd.read_csv(cwd+"/docs/"+filename)
+    df = df.dropna()
+    new_columns = []
+    for col in df.columns:
+        trimmed_col = col.strip()
+        l = trimmed_col.split(' ')
+        l[1:] = [x.capitalize() for x in l[1:]]
+        l = ''.join(l)
+        l = l[0].lower() + l[1:]
+        new_columns.append(l)
+    df.columns = new_columns
+    return df
+
+
+def parse_json_to_geolocgrp(filename: str) -> GeoLocationGroup:
+    print(f"parsing {filename}")
+    cwd = os.getcwd() 
+    filename=cwd+"/docs/"+filename
+
+    with open(filename, "r") as f:
+        json_data = json.load(f)
+
+    geoloc_group_instance = GeoLocationGroup()
+    for each in json_data.get("cellsCoordinate", []):
+        latitude = each.get("y")
+        longitude = each.get("x")
+        if latitude is not None and longitude is not None:
+            geocoor = GeoCoordinates(latitude=latitude, longitude=longitude)
+            geoloc_group_instance.geoLocGrp.append(geocoor)
+
+    return geoloc_group_instance
+
+if __name__ == "__main__":
+
+    df_cell_sc=parse_csv("cell-scenario.csv")
+    df_ue_sc=parse_csv("ue-scenario.csv")
+    config_params_arr = []
+    for row in df_cell_sc.itertuples():
+        config_params = ConfigurationParameters()
+
+        geolocgrp=parse_json_to_geolocgrp(str(row.deploymentScale)+"_cell_coordinates.json")
+
+        config_params.azimuth =  int(row.antennaAzimuth)
+        config_params.tilt =  int(row.antennaTilt)
+        config_params.height =  int(row.antennaHeight)
+        config_params.numberOfCells = int(row.numberOfCells)
+        config_params.deploymentScale = row.deploymentScale
+        config_params.band5G = [row.band5G]
+        config_params.tddDlUlRatio = row.tddDlUlRatio
+        config_params.totalTransmitPowerIntoAntenna = int(row.totalTransmitPowerIntoAntenna)
+        config_params.geoLocGrp = geolocgrp.geoLocGrp
+
+        config_params_arr.append(config_params)
+        # print(config_params.model_dump_json(indent=2, exclude_none=True))
+    # add_context= AdditionalContext(
+    #     ueContext=UEContext(
+    #         numberOfUE = int(ue_row.numberOfUE),
+    #         location = ue_row.location,
+    #         targetThroughput = ue_row.targetThroughput,
+    #         slice = ue_row.slice,
+    #         qosId = ue_row.qosId,
+    #         mobilityModel = ue_row.mobilityModel,
+    #         mobilitySpeed = ue_row.mobilitySpeed
+    #     )
+    # )
+
+    additional_context = [
+        AdditionalContext(ueContext = UEContext(
+            numberOfUE = int(ue_row.numberOfUE),
+            location = ue_row.location,
+            targetThroughput = ue_row.targetThroughput,
+            slice = ue_row.slice,
+            qosId = ue_row.qosId,
+            mobilityModel = ue_row.mobilityModel,
+            mobilitySpeed = ue_row.mobilitySpeed
+        ))
+        for ue_row in df_ue_sc.itertuples()
+    ]
+    
+        
+    
+
+    tm = TestMetadata(
+        startDate= datetime.datetime.now(),
+        configurationParameters = config_params_arr,
+        dutName="Energy saving rApp",
+        testType=TestType.FUNCTIONAL,
+        interfaceUnderTest=[InterfaceUnderTest.SMO_O1],
+        additionalContext=additional_context
+    )
+    
+
+    tb = TestbedComponentsItem()
+    tb.componentDescription = "RIC Simulator"
+    tb.manufacturerName =  "VIAVI"
+    tb.manufacturerModel = "TERAVM RICTest"
+    tb.softwareVersion = "0.0.0"
+
+    tlab = TestLab(
+        name = "Joe",
+        address="Taipei",
+        contacts=[ContactsItem(
+            firstName="Joe",
+            lastName="Joe",
+            email="ss"
+        )]
+    )
+    
+    tspec_expect_target = [ExpectationTargetRequest(
+        targetName = "PEE.AvgPower",
+        targetCondition = "IS_GREATER_THAN_OR_EQUAL_TO",
+        targetValueRange = [20],
+        targetUnit = "%",
+        targetScope = "SpecificCellGroup"
+    )]
+    
+
+    tspec_expect_target.append(ExpectationTargetRequest(
+        targetName = "DRB.UEThpDl",
+        targetCondition = "IS_LESS_THAN_OR_EQUAL_TO",
+        targetValueRange = [10],
+        targetUnit = "%",
+        targetScope = "SpecificUEGroup"
+    ))
+
+    tspec = TestSpecification(
+        expectationVerb = "EXPECT",
+        expectationTargets=tspec_expect_target,
+
+        targetAssuranceTime = {
+            "startTime": datetime.datetime.now(),
+            "endTime": datetime.datetime.now()
+        },
+        expectationObject = [ExpectationObjectFragment(
+        objectType = "RAN_SUBNETWORK"
+    )]
+    )
+
+    print(f"test ID: {tm.testId}")
+    # print(tspec.model_dump_json(indent=2, exclude_none=True))
+    t = TestReport(
+        schemaVersion = 1,
+        testMetadata = tm,
+        testSpecifications = [tspec]
+    )        
+
+    
+    # r = requests.put('http://localhost:8000/ProvMnS/v1alpha1/SubNetwork/{testId}'.format(testId=tm.testId), data=t.model_dump_json(indent=2, exclude_none=True))
+    r = requests.put('http://192.168.8.111:8000/ProvMnS/v1alpha1/SubNetwork/{testId}'.format(testId=tm.testId), data=t.model_dump_json(indent=2, exclude_none=True))
+    print(t.model_dump_json(indent=2, exclude_none=True))
+    print(r.status_code)
+    testId = "448046e8-b7a2-4dd9-a47a-f98074e755e6"
+
+    # r = requests.get("http://localhost:8000/ProvMnS/v1alpha1/SubNetwork/{testId}".format(testId=tm.testId), auth=('user', 'pass'))
+    r = requests.get("http://192.168.8.111:8000/ProvMnS/v1alpha1/SubNetwork/{testId}".format(testId=testId), auth=('user', 'pass'))
+    print(r.status_code)
+
+        # print(r.json())
